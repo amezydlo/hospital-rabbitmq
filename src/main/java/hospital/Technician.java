@@ -90,12 +90,13 @@ public class Technician {
         Random rand = new Random();
         String[] messageParts = message.split(" ");
 
-        System.out.println("[Doctor " + messageParts[0] + "] " + " please examine patient named: " + messageParts[1]);
+        System.out.println("[Doctor " + messageParts[0] + "] " + " please examine patient named: " + messageParts[1]
+                + ". Examination type: " + messageParts[2]);
         Thread.sleep(rand.nextInt(1, 10) * 1000L);
 
 
-        String replyMessage = messageParts[1];
-        System.out.println("[Technician]" + " patient examined: " + messageParts[1]);
+        String replyMessage = messageParts[1] + " " + messageParts[2];
+        System.out.println("[Technician | " + messageParts[2] +"]" + " patient examined: " + messageParts[1]);
         // TODO autoAck off
 
         channel.basicPublish(RESULTS_EXCHANGE, "result:" + messageParts[0], null, replyMessage.getBytes(StandardCharsets.UTF_8));

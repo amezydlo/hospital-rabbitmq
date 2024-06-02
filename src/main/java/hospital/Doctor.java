@@ -91,12 +91,12 @@ public class Doctor {
 
     private void handleResults(String message) throws InterruptedException {
         Random rand = new Random();
-        String[] parts = message.split(",");
-        System.out.println("[Technician]" + " patient examined: " + parts[0]);
+        String[] parts = message.split(" ");
+        System.out.println("[Technician | " + parts[1] + "]" + " patient's  examined: " + parts[0]);
         // simulate heavy task
         Thread.sleep(rand.nextInt(1, 10) * 1000L);
 
-        System.out.println("[Doctor "+ doctorName +"]" + " Now I can start patient's " + parts[0] + " treatment");
+        System.out.println("[Doctor " + doctorName + "]" + " Now I can start patient's " + parts[0] + " treatment");
     }
 
     private void run() throws IOException {
@@ -129,7 +129,7 @@ public class Doctor {
                 continue;
             }
 
-            String order = doctorName + " " + patientName;
+            String order = doctorName + " " + patientName + " " + examinationType.toString().toLowerCase();
             orderExamination(examinationType, channel, order);
 
 
@@ -144,10 +144,12 @@ public class Doctor {
         String[] parts = message.split(" ");
 
 
-        System.out.println("[Doctor " + doctorName + "] please examine patient named " + parts[1]);
+        System.out.println("[Doctor " + doctorName + "] please examine patient named " + parts[1]
+                + ". Examination type " + examinationType.toString().toLowerCase()
+        );
+
         switch (examinationType) {
             case KNEE:
-
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
                         "exam:" + KNEE.toString().toLowerCase(),
