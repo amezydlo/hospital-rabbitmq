@@ -8,11 +8,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-enum ExaminationType {
-    KNEE,
-    HIP,
-    ELBOW
-}
+import static hospital.ExaminationType.*;
+
 
 public class Doctor {
     private final static String EXAMINATION_EXCHANGE = "examination";
@@ -63,7 +60,7 @@ public class Doctor {
             case KNEE:
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE, 
-                        ExaminationType.KNEE.name(), 
+                        KNEE.name(),
                         null, 
                         patientName.getBytes(StandardCharsets.UTF_8)
                 );
@@ -71,7 +68,7 @@ public class Doctor {
             case HIP:
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
-                        ExaminationType.HIP.name(), 
+                        HIP.name(),
                         null, 
                         patientName.getBytes(StandardCharsets.UTF_8)
                 );
@@ -79,7 +76,7 @@ public class Doctor {
             case ELBOW:
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
-                        ExaminationType.ELBOW.name(),
+                        ELBOW.name(),
                         null,
                         patientName.getBytes(StandardCharsets.UTF_8)
                 );
