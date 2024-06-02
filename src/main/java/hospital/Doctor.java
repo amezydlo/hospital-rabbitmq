@@ -49,7 +49,7 @@ public class Doctor {
 
     private void declareQueues() throws IOException {
         resultsQueue = channel.queueDeclare(
-                doctorName,
+                "doctors." + doctorName,
                 false,
                 false,
                 false,
@@ -58,13 +58,13 @@ public class Doctor {
     }
 
     private void bindQueues() throws IOException {
-        channel.queueBind(resultsQueue, RESULTS_EXCHANGE, doctorName);
+        channel.queueBind(resultsQueue, RESULTS_EXCHANGE, "result:" + doctorName);
     }
 
     private String readDoctorName() throws IOException {
         System.out.print("Enter doctor name: ");
         if (sc.hasNextLine()) {
-            return sc.nextLine().trim().toLowerCase();
+            return sc.nextLine().trim();
         } else {
             throw new IOException("Doctor name is a must");
         }
@@ -91,11 +91,12 @@ public class Doctor {
 
     private void handleResults(String message) throws InterruptedException {
         Random rand = new Random();
-        System.out.println("Got " + message);
+        String[] parts = message.split(",");
+        System.out.println("[Technician]" + " patient examined: " + parts[0]);
         // simulate heavy task
         Thread.sleep(rand.nextInt(1, 10) * 1000L);
 
-        System.out.println(doctorName + " Done");
+        System.out.println("[Doctor "+ doctorName +"]" + " Now I can start patient's " + parts[0] + " treatment");
     }
 
     private void run() throws IOException {
@@ -140,13 +141,16 @@ public class Doctor {
 
     private void orderExamination(ExaminationType examinationType, Channel channel, String message) throws IOException {
 
-        System.out.println("[" + doctorName + "] " + message);
+        String[] parts = message.split(" ");
+
+
+        System.out.println("[Doctor " + doctorName + "] please examine patient named " + parts[1]);
         switch (examinationType) {
             case KNEE:
 
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
-                        KNEE.name(),
+                        "exam:" + KNEE.toString().toLowerCase(),
                         null,
                         message.getBytes(StandardCharsets.UTF_8)
                 );
@@ -154,7 +158,7 @@ public class Doctor {
             case HIP:
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
-                        HIP.name(),
+                        "exam:" + HIP.toString().toLowerCase(),
                         null,
                         message.getBytes(StandardCharsets.UTF_8)
                 );
@@ -162,7 +166,7 @@ public class Doctor {
             case ELBOW:
                 channel.basicPublish(
                         EXAMINATION_EXCHANGE,
-                        ELBOW.name(),
+                        "exam:" + ELBOW.toString().toLowerCase(),
                         null,
                         message.getBytes(StandardCharsets.UTF_8)
                 );
